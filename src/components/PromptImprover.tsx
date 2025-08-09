@@ -202,10 +202,10 @@ const PromptImprover = () => {
                 <p className="text-sm text-muted-foreground">No recent chats yet.</p>
               ) : (
                 history.map((c) => (
-                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm truncate">{c.prompt}</p>
-                      <p className="text-xs text-muted-foreground mt-1 truncate">{c.improved}</p>
+                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3 overflow-hidden">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm whitespace-pre-wrap break-words">{c.prompt}</p>
+                      <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap break-words">{c.improved}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label={c.favorited ? "Unfavourite" : "Favourite"}>
@@ -227,10 +227,10 @@ const PromptImprover = () => {
                 <p className="text-sm text-muted-foreground">No favourites yet. Tap the heart on a chat to save it.</p>
               ) : (
                 history.filter((c) => c.favorited).map((c) => (
-                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm truncate">{c.prompt}</p>
-                      <p className="text-xs text-muted-foreground mt-1 truncate">{c.improved}</p>
+                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3 overflow-hidden">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm whitespace-pre-wrap break-words">{c.prompt}</p>
+                      <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap break-words">{c.improved}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label="Unfavourite">
