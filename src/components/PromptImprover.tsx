@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Loader2, Copy, Wand2, Heart, Trash2 } from "lucide-react";
+import { Loader2, Copy, Wand2, Heart, Trash2, Share2, History } from "lucide-react";
+
+import PromptAnalysisPanel from "@/components/prompt/PromptAnalysisPanel";
+import VersionHistoryDialog from "@/components/prompt/VersionHistoryDialog";
 
 const PromptImprover = () => {
   const [prompt, setPrompt] = useState("");
@@ -11,7 +14,7 @@ const PromptImprover = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  type Chat = { id: string; prompt: string; improved: string; favorited: boolean; createdAt: number };
+  type Chat = { id: string; prompt: string; improved: string; versions?: string[]; favorited: boolean; createdAt: number };
   const [history, setHistory] = useState<Chat[]>(() => {
     try {
       const raw = localStorage.getItem("promptimize.history");
@@ -25,15 +28,43 @@ const PromptImprover = () => {
     localStorage.setItem("promptimize.history", JSON.stringify(history));
   }, [history]);
 
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      const s = url.searchParams.get("share");
+      if (s) {
+        const decoded = JSON.parse(decodeURIComponent(atob(s)));
+        if (decoded?.p && decoded?.i) {
+          setPrompt(decoded.p);
+          setImprovedPrompt(decoded.i);
+          addToHistory(decoded.p, decoded.i);
+          toast({ title: "Shared prompt loaded", description: "You can edit and reshare." });
+        }
+      }
+    } catch {}
+  }, []);
+
   const addToHistory = (promptText: string, improvedText: string) => {
-    const newItem: Chat = {
-      id: (typeof crypto !== "undefined" && "randomUUID" in crypto) ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-      prompt: promptText,
-      improved: improvedText,
-      favorited: false,
-      createdAt: Date.now(),
-    };
     setHistory((prev) => {
+      if (prev.length > 0 && prev[0].prompt.trim() === promptText.trim()) {
+        const head = prev[0];
+        const updatedHead: Chat = {
+          ...head,
+          improved: improvedText,
+          versions: [...(head.versions || [head.improved]), improvedText],
+          createdAt: Date.now(),
+        };
+        const next = [updatedHead, ...prev.slice(1)];
+        return next.slice(0, 5);
+      }
+      const newItem: Chat = {
+        id: (typeof crypto !== "undefined" && "randomUUID" in crypto) ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        prompt: promptText,
+        improved: improvedText,
+        versions: [improvedText],
+        favorited: false,
+        createdAt: Date.now(),
+      };
       const next = [newItem, ...prev];
       return next.slice(0, 5);
     });
@@ -123,6 +154,18 @@ const PromptImprover = () => {
     }
   };
 
+  const handleShare = async (c: Chat) => {
+    try {
+      const payload = { p: c.prompt, i: c.improved };
+      const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+      const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
+      await navigator.clipboard.writeText(url);
+      toast({ title: "Share link copied!", description: "Send this link to share the prompt" });
+    } catch {
+      toast({ title: "Failed to generate link", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-2">
@@ -143,6 +186,7 @@ const PromptImprover = () => {
             onChange={(e) => setPrompt(e.target.value)}
             className="min-h-[100px] resize-none"
           />
+          <PromptAnalysisPanel prompt={prompt} />
         </div>
 
         <Button
@@ -208,6 +252,10 @@ const PromptImprover = () => {
                       <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap break-words">{c.improved}</p>
                     </div>
                     <div className="flex items-center gap-1">
+                      <VersionHistoryDialog chat={c} />
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleShare(c)} aria-label="Share chat">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label={c.favorited ? "Unfavourite" : "Favourite"}>
                         <Heart className={`h-4 w-4 ${c.favorited ? "text-brand-600" : ""}`} />
                       </Button>
@@ -232,14 +280,18 @@ const PromptImprover = () => {
                       <p className="text-sm whitespace-pre-wrap break-words">{c.prompt}</p>
                       <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap break-words">{c.improved}</p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label="Unfavourite">
-                        <Heart className="h-4 w-4 text-brand-600" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteChat(c.id)} aria-label="Delete chat">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                      <div className="flex items-center gap-1">
+                        <VersionHistoryDialog chat={c} />
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleShare(c)} aria-label="Share chat">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label="Unfavourite">
+                          <Heart className="h-4 w-4 text-brand-600" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteChat(c.id)} aria-label="Delete chat">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                   </article>
                 ))
               )}
