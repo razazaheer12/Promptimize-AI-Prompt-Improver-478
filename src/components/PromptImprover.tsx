@@ -1,14 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Copy, Wand2 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Loader2, Copy, Wand2, Heart, Trash2 } from "lucide-react";
 
 const PromptImprover = () => {
   const [prompt, setPrompt] = useState("");
   const [improvedPrompt, setImprovedPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  type Chat = { id: string; prompt: string; improved: string; favorited: boolean; createdAt: number };
+  const [history, setHistory] = useState<Chat[]>(() => {
+    try {
+      const raw = localStorage.getItem("promptimize.history");
+      return raw ? (JSON.parse(raw) as Chat[]) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("promptimize.history", JSON.stringify(history));
+  }, [history]);
+
+  const addToHistory = (promptText: string, improvedText: string) => {
+    const newItem: Chat = {
+      id: (typeof crypto !== "undefined" && "randomUUID" in crypto) ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      prompt: promptText,
+      improved: improvedText,
+      favorited: false,
+      createdAt: Date.now(),
+    };
+    setHistory((prev) => {
+      const next = [newItem, ...prev];
+      return next.slice(0, 5);
+    });
+  };
+
+  const toggleFavorite = (id: string) => {
+    setHistory((prev) => prev.map((c) => (c.id === id ? { ...c, favorited: !c.favorited } : c)));
+  };
+
+  const deleteChat = (id: string) => {
+    setHistory((prev) => prev.filter((c) => c.id !== id));
+    toast({ title: "Chat deleted" });
+  };
 
   const improvePrompt = async () => {
     if (!prompt.trim()) {
@@ -53,6 +91,7 @@ const PromptImprover = () => {
       }
       
       setImprovedPrompt(improved);
+      addToHistory(prompt, improved);
       toast({
         title: "Prompt improved!",
         description: "Your prompt has been enhanced with more specific details and clarity.",
@@ -149,6 +188,65 @@ const PromptImprover = () => {
           </div>
         )}
       </div>
+
+      <section aria-labelledby="history-title" className="space-y-3">
+        <h2 id="history-title" className="text-lg font-semibold">Your Chats</h2>
+        <Tabs defaultValue="recent" className="w-full">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="recent">Recent</TabsTrigger>
+            <TabsTrigger value="favourites">Favourites</TabsTrigger>
+          </TabsList>
+          <TabsContent value="recent">
+            <div className="space-y-2">
+              {history.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No recent chats yet.</p>
+              ) : (
+                history.map((c) => (
+                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm truncate">{c.prompt}</p>
+                      <p className="text-xs text-muted-foreground mt-1 truncate">{c.improved}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label={c.favorited ? "Unfavourite" : "Favourite"}>
+                        <Heart className={`h-4 w-4 ${c.favorited ? "text-brand-600" : ""}`} />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteChat(c.id)} aria-label="Delete chat">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="favourites">
+            <div className="space-y-2">
+              {history.filter((c) => c.favorited).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No favourites yet. Tap the heart on a chat to save it.</p>
+              ) : (
+                history.filter((c) => c.favorited).map((c) => (
+                  <article key={c.id} className="rounded-lg border bg-card text-card-foreground p-3 flex items-start gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm truncate">{c.prompt}</p>
+                      <p className="text-xs text-muted-foreground mt-1 truncate">{c.improved}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFavorite(c.id)} aria-label="Unfavourite">
+                        <Heart className="h-4 w-4 text-brand-600" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteChat(c.id)} aria-label="Delete chat">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </section>
     </div>
   );
 };
