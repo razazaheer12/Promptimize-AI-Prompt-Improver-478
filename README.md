@@ -1,6 +1,9 @@
-# Promptimize AI — AI Prompt Improver
+# Promptimize AI — Prompt Improver
 
 A modern, sleek tool to improve your AI prompts with real-time analysis, version history with side‑by‑side diffs, and easy sharing. Built with React, Vite, Tailwind CSS, TypeScript, and shadcn‑ui.
+
+<img width="1223" height="624" alt="image" src="https://github.com/user-attachments/assets/d80446af-6747-497d-9d60-462432476ad9" />
+
 
 ## ✨ Features
 
