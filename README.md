@@ -1,69 +1,82 @@
-# Welcome to your Lovable project
+# Promptimize AI — AI Prompt Improver
 
-## Project info
+A modern, sleek tool to improve your AI prompts with real-time analysis, version history with side‑by‑side diffs, and easy sharing. Built with React, Vite, Tailwind CSS, TypeScript, and shadcn‑ui.
 
-**URL**: https://lovable.dev/projects/d56d67db-1c50-48f2-960c-1aa41fc88736
+## ✨ Features
 
-## How can I edit this code?
+- Real‑time Prompt Analysis: Score (1–10) and actionable suggestions as you type
+- Version History & Comparison: View original vs. improved prompts with diffs
+- Shareable Links: Generate share links for improved prompts to collaborate
+- Clean, Layered UI: Card‑based layout, refined typography, subtle animations
+- Overflow‑safe Lists: Recent/Favourites chat items wrap and truncate gracefully
+- SEO‑ready: Title/description meta tags, canonical link, and Open Graph image
 
-There are several ways of editing your application.
+## 🧰 Tech Stack
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/d56d67db-1c50-48f2-960c-1aa41fc88736) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
+- React 18 + Vite
 - TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Tailwind CSS + tailwindcss-animate
+- shadcn‑ui (Radix primitives)
+- Lucide Icons
 
-## How can I deploy this project?
+## 🚀 Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/d56d67db-1c50-48f2-960c-1aa41fc88736) and click on Share -> Publish.
+Prerequisites: Node.js 18+ and npm
 
-## I want to use a custom domain - is that possible?
+1. Install dependencies
+   npm install
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+2. Start the dev server
+   npm run dev
+   The app runs on http://localhost:8080
+
+3. Build for production
+   npm run build
+
+4. Preview production build
+   npm run preview
+
+## 📁 Project Structure (excerpt)
+
+- index.html — SEO meta, fonts (Inter), app mount
+- src/main.tsx — App bootstrap
+- src/pages/Index.tsx — Landing page layout
+- src/components/PromptImprover.tsx — Main prompt improver UI and logic
+- src/components/prompt/PromptAnalysisPanel.tsx — Live scoring/suggestions
+- src/components/prompt/VersionHistoryDialog.tsx — Side‑by‑side diffs
+- src/components/ui/* — Reusable shadcn‑ui components
+- src/index.css — Design tokens and global styles
+- tailwind.config.ts — Tailwind setup and theme tokens
+
+## 🎨 Theming & Design System
+
+- Typography: Inter (loaded in index.html)
+- Colors: Use semantic tokens defined in src/index.css and tailwind.config.ts
+- Components: Prefer shadcn‑ui primitives with project variants over custom CSS
+- Animations: Use tailwindcss-animate utilities for subtle micro‑interactions
+
+## 🧪 Using the App
+
+1. Enter or paste a prompt in the input area
+2. Click “Improve Prompt” to generate an enhanced version
+3. Review the Prompt Analysis panel for score and suggestions
+4. Open Version History on any improved entry to compare changes
+5. Use Share on an improved entry to copy a link for collaboration
+
+## 🔧 Development Notes
+
+- Follow TypeScript best practices and keep components focused and small
+- Use Tailwind utility classes with the project’s semantic tokens (no raw colors)
+- Keep SEO tags up‑to‑date in index.html (title, description, canonical, og:image)
+
+## 📦 Deploying
+
+You can deploy the Vite production build to any static host (e.g., Netlify, Vercel, GitHub Pages). Build with npm run build and deploy the dist folder.
+
+## 🤝 Contributing
+
+Issues and PRs are welcome. Please keep changes small and focused; prefer component reuse and consistent theming.
+
+## 📝 License
+
+MIT © 2025
