@@ -76,6 +76,10 @@ Prerequisites: Node.js 18+ and npm
 
 You can deploy the Vite production build to any static host (e.g., Netlify, Vercel, GitHub Pages). Build with npm run build and deploy the dist folder.
 
+## 🌐 Demo
+
+Visit the live demo: [Password Generator](https://prompt-enhancer-grove-478.lovable.app/)
+
 ## 🤝 Contributing
 
 Issues and PRs are welcome. Please keep changes small and focused; prefer component reuse and consistent theming.
