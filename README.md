@@ -80,6 +80,11 @@ You can deploy the Vite production build to any static host (e.g., Netlify, Verc
 
 Issues and PRs are welcome. Please keep changes small and focused; prefer component reuse and consistent theming.
 
-## 📝 License
+## 📄 License
 
-MIT © 2025
+This project is open source and available under the [MIT License](LICENSE).
+
+## Author
+
+razazaheer12 ❤️ 
+
