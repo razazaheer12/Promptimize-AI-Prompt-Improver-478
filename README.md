@@ -78,7 +78,7 @@ You can deploy the Vite production build to any static host (e.g., Netlify, Verc
 
 ## 🌐 Demo
 
-Visit the live demo: [Password Generator](https://prompt-enhancer-grove-478.lovable.app/)
+Visit the live demo: [Promptimize AI_Prompt Improver](https://prompt-enhancer-grove-478.lovable.app/)
 
 ## 🤝 Contributing
 
